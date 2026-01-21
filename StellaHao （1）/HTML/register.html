@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 - StellaHao</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../CSS/styles.css">
+</head>
+<body>
+    <!-- 头部 -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-gamepad fa-2x"></i>
+            <h1>StellaHao</h1>
+    </header>
+     <style>
+        :root {
+            --primary: #1b2838;
+            --secondary: #2a475e;
+            --accent: #66c0f4;
+            --text: #c7d5e0;
+            --highlight: #f5f5f5;
+            --card-bg: rgba(42, 71, 94, 0.5);
+            --success: #5ba32b;
+            --warning: #e68a00;
+            --danger: #cc3333;
+            --gold: #ffd700;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary), #0f1a24);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+        
+        /* 头部样式 - 与主站一致 */
+        header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid rgba(102, 192, 244, 0.2);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(to right, var(--accent), #ffffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+        
+        /* 导航样式 - 与主站一致 */
+        nav {
+            background: var(--secondary);
+            padding: 0.8rem 5%;
+            border-bottom: 1px solid rgba(102, 192, 244, 0.1);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent);
+        }
+        
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            min-height: calc(100vh - 300px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 5%;
+        }
+        
+        /* 注册表单样式 */
+        .auth-container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 10px;
+            border: 1px solid rgba(102, 192, 244, 0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .auth-title {
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .auth-form .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .auth-form label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--accent);
+        }
+        
+        .auth-form input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(22, 32, 45, 0.8);
+            border: 1px solid rgba(102, 192, 244, 0.3);
+            border-radius: 6px;
+            color: var(--highlight);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .auth-form input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(102, 192, 244, 0.3);
+            outline: none;
+        }
+        
+        .password-strength {
+            margin-top: 5px;
+            height: 5px;
+            background: rgba(102, 192, 244, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .strength-meter {
+            height: 100%;
+            width: 0;
+            background: var(--danger);
+            transition: all 0.3s ease;
+        }
+        
+        .form-hint {
+            font-size: 0.8rem;
+            color: #a9b8c8;
+            margin-top: 5px;
+        }
+        
+        .auth-actions {
+            margin-top: 30px;
+        }
+        
+        .auth-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(to right, var(--accent), #3a9bc9);
+            color: #0f1a24;
+            padding: 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 192, 244, 0.3);
+        }
+        
+        .auth-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 192, 244, 0.5);
+        }
+        
+        .auth-links {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .auth-links a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .terms-agreement {
+            display: flex;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+        
+        .terms-agreement input {
+            width: auto;
+            margin-right: 10px;
+            margin-top: 3px;
+        }
+        
+        .terms-agreement label {
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+        
+        .terms-agreement a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        
+        .terms-agreement a:hover {
+            text-decoration: underline;
+        }
+        
+        /* 页脚样式 - 与主站一致 */
+        footer {
+            background: var(--primary);
+            padding: 4rem 5% 2rem;
+            border-top: 1px solid rgba(102, 192, 244, 0.1);
+            margin-top: 50px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-column h4 {
+            color: var(--accent);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h4::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--accent);
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-column ul li a {
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-column ul li a:hover {
+            color: var(--accent);
+            padding-left: 5px;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(102, 192, 244, 0.1);
+            color: var(--accent);
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background: var(--accent);
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(102, 192, 244, 0.1);
+            color: #a9b8c8;
+            font-size: 0.9rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .auth-container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+    
+    
+    
+    <div class="main-content">
+        <div class="auth-container">
+            <h1 class="auth-title">创建新账户</h1>
+            
+            <form class="auth-form">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" placeholder="输入您的用户名" required>
+                    <p class="form-hint">4-20个字符，可使用字母、数字和下划线</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">电子邮箱</label>
+                    <input type="email" id="email" placeholder="输入您的电子邮箱" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" placeholder="输入密码" required>
+                    <div class="password-strength">
+                        <div class="strength-meter" id="strength-meter"></div>
+                    </div>
+                    <p class="form-hint">至少8个字符，包含字母和数字</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm-password">确认密码</label>
+                    <input type="password" id="confirm-password" placeholder="再次输入密码" required>
+                </div>
+                
+                <div class="terms-agreement">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">我已阅读并同意<a href="#">服务条款</a>和<a href="#">隐私政策</a></label>
+                </div>
+                
+                <div class="auth-actions">
+                    <button type="submit" class="auth-btn">注册</button>
+                </div>
+                
+                <div class="auth-links">
+                    已有账户？<a href="login.html">立即登录</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h4>关于StellaHao</h4>
+                <ul>
+                    <li><a href="#">公司简介</a></li>
+                    <li><a href="#">团队介绍</a></li>
+                    <li><a href="#">联系我们</a></li>
+                    <li><a href="#">加入我们</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>帮助中心</h4>
+                <ul>
+                    <li><a href="#">常见问题</a></li>
+                    <li><a href="#">账号问题</a></li>
+                    <li><a href="#">支付问题</a></li>
+                    <li><a href="#">退款政策</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>法律信息</h4>
+                <ul>
+                    <li><a href="#">用户协议</a></li>
+                    <li><a href="#">隐私政策</a></li>
+                    <li><a href="#">版权声明</a></li>
+                    <li><a href="#">使用条款</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>关注我们</h4>
+                <p>获取最新游戏资讯和优惠活动</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-weibo"></i></a>
+                    <a href="#"><i class="fab fa-weixin"></i></a>
+                    <a href="#"><i class="fab fa-qq"></i></a>
+                    <a href="#"><i class="fab fa-bilibili"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p> 2025 StellaHao- 探索无限游戏世界。保留所有权利。</p>
+        </div>
+    </footer>
+
+    <script>
+        // 密码强度检测
+        const passwordInput = document.getElementById('password');
+        const strengthMeter = document.getElementById('strength-meter');
+        
+        passwordInput.addEventListener('input'), function() {
+            const password = this.value;
+            let strength = 0;
+            
+            // 长度检查
+            if (password.length >= 8) strength += 1;
+            if (password.length >= 12) strength += 1;
+            
+            // 包含数字
+            if (/\d/.test(password)) strength += 1;
+            
+            // 包含特殊字符
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength += 1;
+            
+            // 更新强度条
+            let width = 0;
+            let color = '';
+            
+            switch(strength) {
+                case 0:
+                    width = 0;
+                    color = 'var(--danger)';
+                    break;
+                case 1:
+                    width = 25;
+                    color = 'var(--danger)';
+                    break;
+                case 2:
+                    width = 50;
+                    color = 'var(--warning)';
+                    break;
+                case 3:
+                    width = 75;
+                    color ='var(--success)';
+                    break;
+                case 4:
+                    width = 100;
+                    color = 'var(--success)';
+                    break;
+            }
+            
+            strengthMeter.style.width = width +'%';
+            strengthMeter.style.background = color;
+        };
+        
+        // 表单验证
+        document.querySelector('apos;.auth-form').addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const termsChecked = document.getElementById('terms').checked;
+            
+            if (password !== confirmPassword) {
+                alert('两次输入的密码不一致！');
+                e.preventDefault();
+            }
+            
+            if (!termsChecked) {
+                alert('请阅读并同意服务条款和隐私政策');
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

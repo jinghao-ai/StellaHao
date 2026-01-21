@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>购物车 - StellaHao</title>
+    <link rel="stylesheet" href="../CSS/styles.css">
+    <style>
+        :root {
+            --primary: #1b2838;
+            --secondary: #2a475e;
+            --accent: #66c0f4;
+            --text: #c7d5e0;
+            --highlight: #f5f5f5;
+            --card-bg: rgba(42, 71, 94, 0.5);
+            --success: #5ba32b;
+            --warning: #e68a00;
+            --danger: #cc3333;
+            --gold: #ffd700;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary), #0f1a24);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+        
+        /* 头部样式 - 与主站一致 */
+        header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid rgba(102, 192, 244, 0.2);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(to right, var(--accent), #ffffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+        
+        /* 导航样式 - 与主站一致 */
+        nav {
+            background: var(--secondary);
+            padding: 0.8rem 5%;
+            border-bottom: 1px solid rgba(102, 192, 244, 0.1);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent);
+        }
+        
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            min-height: calc(100vh - 300px);
+            padding: 2rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* 购物车特定样式 */
+        .cart-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+        
+        .cart-items {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid rgba(102, 192, 244, 0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .cart-title {
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(102, 192, 244, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .cart-item {
+            display: flex;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(102, 192, 244, 0.1);
+        }
+        
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        
+        .cart-item-cover {
+            width: 120px;
+            height: 160px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .cart-item-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .cart-item-details {
+            flex: 1;
+        }
+        
+        .cart-item-title {
+            font-size: 1.2rem;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+        
+        .cart-item-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #a9b8c8;
+        }
+        
+        .cart-item-price {
+            font-size: 1.2rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+        
+        .cart-item-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            background: rgba(102, 192, 244, 0.1);
+            border: none;
+            color: var(--accent);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .quantity-btn:hover {
+            background: var(--accent);
+            color: var(--primary);
+        }
+        
+        .quantity {
+            width: 40px;
+            text-align: center;
+            background: transparent;
+            border: 1px solid rgba(102, 192, 244, 0.3);
+            color: var(--text);
+            padding: 5px;
+            border-radius: 4px;
+        }
+        
+        .remove-btn {
+            background: rgba(204, 51, 51, 0.1);
+            border: none;
+            color: var(--danger);
+            padding: 5px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .remove-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+        
+        /* 购物车总结 */
+        .cart-summary {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid rgba(102, 192, 244, 0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            height: fit-content;
+            position: sticky;
+            top: 120px;
+        }
+        
+        .summary-title {
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(102, 192, 244, 0.3);
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .summary-total {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin: 20px 0;
+            padding-top: 15px;
+            border-top: 2px solid rgba(102, 192, 244, 0.3);
+        }
+        
+        .checkout-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(to right, var(--accent), #3a9bc9);
+            color: #0f1a24;
+            padding: 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 192, 244, 0.3);
+            margin-top: 20px;
+        }
+        
+        .checkout-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 192, 244, 0.5);
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 50px 0;
+        }
+        
+        .empty-cart-icon {
+            font-size: 5rem;
+            color: rgba(102, 192, 244, 0.3);
+            margin-bottom: 20px;
+        }
+        
+        .empty-cart-message {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: var(--accent);
+        }
+        
+        .continue-shopping {
+            display: inline-block;
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            padding: 10px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .continue-shopping:hover {
+            background: rgba(102, 192, 244, 0.1);
+        }
+        
+        /* 页脚样式 - 与主站一致 */
+        footer {
+            background: var(--primary);
+            padding: 4rem 5% 2rem;
+            border-top: 1px solid rgba(102, 192, 244, 0.1);
+            margin-top: 50px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-column h4 {
+            color: var(--accent);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h4::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--accent);
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-column ul li a {
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-column ul li a:hover {
+            color: var(--accent);
+            padding-left: 5px;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(102, 192, 244, 0.1);
+            color: var(--accent);
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background: var(--accent);
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(102, 192, 244, 0.1);
+            color: #a9b8c8;
+            font-size: 0.9rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .cart-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .cart-summary {
+                position: static;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .cart-item {
+                flex-direction: column;
+            }
+            
+            .cart-item-cover {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 3/4;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .cart-item-meta {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .cart-item-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .quantity-control {
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部 - 与主站一致 -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-gamepad fa-2x"></i>
+            <h1>StellaHao</h1>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="搜索游戏、创作者、标签...">
+            <button><i class="fas fa-search"></i> 搜索</button>
+        </div>
+        <div class="user-actions">
+            <a href="../HTML/购物车.html" class="active"><i class="fas fa-shopping-cart"></i> 购物车</a>
+            <a href="../HTML/login.html"><i class="fas fa-user"></i> 登录</a>
+        </div>
+    </header>
+    
+    <!-- 导航 - 与主站一致 -->
+    <nav>
+        <ul class="nav-links">
+            <li><a href="index.html">首页</a></li>
+            <li><a href="#">热门游戏</a></li>
+            <li><a href="#">折扣游戏</a></li>
+            <li><a href="#">新游上架</a></li>
+            <li><a href="#">交互叙事</a></li>
+            <li><a href="#">社区</a></li>
+            <li><a href="#">关于我们</a></li>
+        </ul>
+    </nav>
+    
+    <!-- 购物车主内容区 -->
+    <div class="main-content">
+        <h1 class="cart-title"><i class="fas fa-shopping-cart"></i> 我的购物车</h1>
+        
+        <div class="cart-container">
+            <div class="cart-items">
+                <!-- 购物车有商品时的状态 -->
+                <div class="cart-item">
+                    <div class="cart-item-cover">
+                        <img src="../images/5010.jpg" alt="黑神话：悟空">
+                    </div>
+                    <div class="cart-item-details">
+                        <h3 class="cart-item-title">黑神话：悟空</h3>
+                        <div class="cart-item-meta">
+                            <span>动作角色扮演</span>
+                            <span>单人游戏</span>
+                            <span>游戏科学</span>
+                        </div>
+                        <div class="cart-item-price">¥ 208 <span class="original-price">¥ 298</span></div>
+                        <div class="cart-item-actions">
+                            <div class="quantity-control">
+                                <button class="quantity-btn">-</button>
+                                <input type="number" class="quantity" value="1" min="1">
+                                <button class="quantity-btn">+</button>
+                            </div>
+                            <button class="remove-btn"><i class="fas fa-trash"></i> 移除</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cart-item">
+                    <div class="cart-item-cover">
+                        <img src="../images/5060.jpg" alt="赛博朋克2077">
+                    </div>
+                    <div class="cart-item-details">
+                        <h3 class="cart-item-title">赛博朋克2077</h3>
+                        <div class="cart-item-meta">
+                            <span>开放世界RPG</span>
+                            <span>单人游戏</span>
+                            <span>CD Projekt Red</span>
+                        </div>
+                        <div class="cart-item-price">¥ 149 <span class="original-price">¥ 298</span></div>
+                        <div class="cart-item-actions">
+                            <div class="quantity-control">
+                                <button class="quantity-btn">-</button>
+                                <input type="number" class="quantity" value="1" min="1">
+                                <button class="quantity-btn">+</button>
+                            </div>
+                            <button class="remove-btn"><i class="fas fa-trash"></i> 移除</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="cart-item">
+                    <div class="cart-item-cover">
+                        <img src="../images/5000.jpg" alt="GTA5">
+                    </div>
+                    <div class="cart-item-details">
+                        <h3 class="cart-item-title">侠盗猎车手5</h3>
+                        <div class="cart-item-meta">
+                            <span>动作冒险犯罪</span>
+                            <span>单人/多人游戏</span>
+                            <span>Rockstar North</span>
+                        </div>
+                        <div class="cart-item-price">¥ 59<span class="original-price">¥ 189</span></div>
+                        <div class="cart-item-actions">
+                            <div class="quantity-control">
+                                <button class="quantity-btn">-</button>
+                                <input type="number" class="quantity" value="1" min="1">
+                                <button class="quantity-btn">+</button>
+                            </div>
+                            <button class="remove-btn"><i class="fas fa-trash"></i> 移除</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="cart-item">
+                    <div class="cart-item-cover">
+                        <img src="../images/5020.jpg" alt="Elden Ring">
+                    </div>
+                    <div class="cart-item-details">
+                        <h3 class="cart-item-title">Elden Ring</h3>
+                        <div class="cart-item-meta">
+                            <span>动作角色扮演</span>
+                            <span>单人游戏</span>
+                            <span>FromSoftware</span>
+                        </div>
+                        <div class="cart-item-price">¥ 248<span class="original-price">¥ 298</span></div>
+                        <div class="cart-item-actions">
+                            <div class="quantity-control">
+                                <button class="quantity-btn">-</button>
+                                <input type="number" class="quantity" value="1" min="1">
+                                <button class="quantity-btn">+</button>
+                            </div>
+                            <button class="remove-btn"><i class="fas fa-trash"></i> 移除</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="cart-item">
+                    <div class="cart-item-cover">
+                        <img src="../images/5030.jpg" alt="消逝的光芒">
+                    </div>
+                    <div class="cart-item-details">
+                        <h3 class="cart-item-title">消逝的光芒</h3>
+                        <div class="cart-item-meta">
+                            <span>动作生存</span>
+                            <span>单人/多人合作</span>
+                            <span>Techland</span>
+                        </div>
+                        <div class="cart-item-price">¥ 59<span class="original-price">¥ 199</span></div>
+                        <div class="cart-item-actions">
+                            <div class="quantity-control">
+                                <button class="quantity-btn">-</button>
+                                <input type="number" class="quantity" value="1" min="1">
+                                <button class="quantity-btn">+</button>
+                            </div>
+                            <button class="remove-btn"><i class="fas fa-trash"></i> 移除</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="cart-item">
+                    <div class="cart-item-cover">
+                        <img src="../images/5040.jpg" alt="荒野大镖客：救赎2">
+                    </div>
+                    <div class="cart-item-details">
+                        <h3 class="cart-item-title">荒野大镖客：救赎2</h3>
+                        <div class="cart-item-meta">
+                            <span>开放世界动作冒险</span>
+                            <span>单人/多人游戏</span>
+                            <span>Rockstar Games</span>
+                        </div>
+                        <div class="cart-item-price">¥ 149 <span class="original-price">¥ 249</span></div>
+                        <div class="cart-item-actions">
+                            <div class="quantity-control">
+                                <button class="quantity-btn">-</button>
+                                <input type="number" class="quantity" value="1" min="1">
+                                <button class="quantity-btn">+</button>
+                            </div>
+                            <button class="remove-btn"><i class="fas fa-trash"></i> 移除</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="cart-item">
+                    <div class="cart-item-cover">
+                        <img src="../images/5050.jpg" alt="寂静岭2重制版">
+                    </div>
+                    <div class="cart-item-details">
+                        <h3 class="cart-item-title">寂静岭2重制版</h3>
+                        <div class="cart-item-meta">
+                            <span>心理恐怖</span>
+                            <span>单人游戏</span>
+                            <span>Konami</span>
+                        </div>
+                        <div class="cart-item-price">¥ 358<span class="original-price">¥ 398</span></div>
+                        <div class="cart-item-actions">
+                            <div class="quantity-control">
+                                <button class="quantity-btn">-</button>
+                                <input type="number" class="quantity" value="1" min="1">
+                                <button class="quantity-btn">+</button>
+                            </div>
+                            <button class="remove-btn"><i class="fas fa-trash"></i> 移除</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="cart-item">
+                    <div class="cart-item-cover">
+                        <img src="../images/5070.jpg" alt="巫师3：狂猎">
+                    </div>
+                    <div class="cart-item-details">
+                        <h3 class="cart-item-title">巫师3：狂猎</h3>
+                        <div class="cart-item-meta">
+                            <span>开放世界RPG</span>
+                            <span>单人游戏</span>
+                            <span>CD Projec Red</span>
+                        </div>
+                       <div class="cart-item-price">¥ 39 <span class="original-price">¥ 158</span></div>
+                        <div class="cart-item-actions">
+                            <div class="quantity-control">
+                                <button class="quantity-btn">-</button>
+                                <input type="number" class="quantity" value="1" min="1">
+                                <button class="quantity-btn">+</button>
+                            </div>
+                            <button class="remove-btn"><i class="fas fa-trash"></i> 移除</button>
+                        </div>
+                
+                <!-- 购物车为空时的状态 (注释掉以显示有商品的状态) -->
+                <!--
+                <div class="empty-cart">
+                    <div class="empty-cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h3 class="empty-cart-message">您的购物车是空的</h3>
+                    <a href="index.html" class="continue-shopping">继续购物</a>
+                </div>
+                -->
+            </div>
+            
+            <div class="cart-summary">
+                <h2 class="summary-title">订单摘要</h2>
+                <div class="summary-row">
+                    <span>商品小计 (8件)</span>
+                    <span>¥ 2087</span>
+                </div>
+                <div class="summary-row">
+                    <span>折扣</span>
+                    <span>-¥ 1269</span>
+                </div>
+                <div class="summary-row">
+                    <span>运费</span>
+                    <span>¥ 0</span>
+                </div>
+                <div class="summary-total">
+                    <span>总计</span>
+                    <span>¥ 1269</span>
+                </div>
+                <button class="checkout-btn">前往结算</button>
+                <p style="text-align: center; margin-top: 15px; font-size: 0.9rem;">或 <a href="index.html" style="color: var(--accent);">继续购物</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 页脚 - 与主站一致 -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h4>关于StellaHao</h4>
+                <ul>
+                    <li><a href="#">公司简介</a></li>
+                    <li><a href="#">团队介绍</a></li>
+                    <li><a href="#">联系我们</a></li>
+                    <li><a href="#">加入我们</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>帮助中心</h4>
+                <ul>
+                    <li><a href="#">常见问题</a></li>
+                    <li><a href="#">账号问题</a></li>
+                    <li><a href="#">支付问题</a></li>
+                    <li><a href="#">退款政策</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>法律信息</h4>
+                <ul>
+                    <li><a href="#">用户协议</a></li>
+                    <li><a href="#">隐私政策</a></li>
+                    <li><a href="#">版权声明</a></li>
+                    <li><a href="#">使用条款</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>关注我们</h4>
+                <p>获取最新游戏资讯和优惠活动</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-weibo"></i></a>
+                    <a href="#"><i class="fab fa-weixin"></i></a>
+                    <a href="#"><i class="fab fa-qq"></i></a>
+                    <a href="#"><i class="fab fa-bilibili"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p> 2025 StellaHao - 探索无限游戏世界。保留所有权利。</p>
+        </div>
+    </footer>
+
+    <script>
+        // 购物车交互功能
+        document.querySelectorAll('.quantity-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = this.parentElement.querySelector('.quantity');
+                let value = parseInt(input.value);
+                
+                if (this.textContent === '+' && value < 99) {
+                    input.value = value + 1;
+                } if (this.textContent ==='-&'&& value > 1) {
+                    input.value = value - 1;
+                }
+                
+                // 这里可以添加更新总价的逻辑
+            });
+        });
+        
+        document.querySelectorAll('.remove-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const item = this.closest('.cart-item');
+                item.style.opacity = '0';
+                setTimeout(() => {
+                    item.remove();
+                    // 检查是否没有商品了，显示空购物车状态
+                    if (document.querySelectorAll('.cart-item').length === 0) {
+                        document.querySelector('.cart-items').innerHTML = `
+                            <div class="empty-cart">
+                                <div class="empty-cart-icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                                <h3 class="empty-cart-message">您的购物车是空的</h3>
+                                <a href="index.html" class="continue-shopping">继续购物</a>
+                            </div>
+                        `;
+                    }
+                }, 300);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - StellaHao</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1b2838;
+            --secondary: #2a475e;
+            --accent: #66c0f4;
+            --text: #c7d5e0;
+            --highlight: #f5f5f5;
+            --card-bg: rgba(42, 71, 94, 0.5);
+            --success: #5ba32b;
+            --warning: #e68a00;
+            --danger: #cc3333;
+            --gold: #ffd700;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary), #0f1a24);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid rgba(102, 192, 244, 0.2);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(to right, var(--accent), #ffffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+        
+        nav {
+            background: var(--secondary);
+            padding: 0.8rem 5%;
+            border-bottom: 1px solid rgba(102, 192, 244, 0.1);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent);
+        }
+        
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            min-height: calc(100vh - 300px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 5%;
+        }
+        
+        /* 登录表单样式 */
+        .auth-container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 10px;
+            border: 1px solid rgba(102, 192, 244, 0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .auth-title {
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .auth-form .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .auth-form label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--accent);
+        }
+        
+        .auth-form input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(22, 32, 45, 0.8);
+            border: 1px solid rgba(102, 192, 244, 0.3);
+            border-radius: 6px;
+            color: var(--highlight);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .auth-form input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(102, 192, 244, 0.3);
+            outline: none;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+        }
+        
+        .remember-me input {
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        .remember-me label {
+            color: var(--text);
+            margin-bottom: 0;
+        }
+        
+        .auth-actions {
+            margin-top: 30px;
+        }
+        
+        .auth-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(to right, var(--accent), #3a9bc9);
+            color: #0f1a24;
+            padding: 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 192, 244, 0.3);
+        }
+        
+        .auth-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 192, 244, 0.5);
+        }
+        
+        .auth-links {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .auth-links a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .forgot-password {
+            display: block;
+            text-align: right;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .forgot-password a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+        
+        .social-login {
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .social-login-title {
+            position: relative;
+            margin-bottom: 20px;
+            color: #a9b8c8;
+            font-size: 0.9rem;
+        }
+        
+        .social-login-title::before,
+        .social-login-title::after {
+            content:'';
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 1px;
+            background: rgba(102, 192, 244, 0.3);
+        }
+        
+        .social-login-title::before {
+            left: 0;
+        }
+        
+        .social-login-title::after {
+            right: 0;
+        }
+        
+        .social-login-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(22, 32, 45, 0.8);
+            color: var(--text);
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(102, 192, 244, 0.3);
+        }
+        
+        .social-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .social-btn.weibo {
+            color: #e6162d;
+        }
+        
+        .social-btn.weixin {
+            color: #07c160;
+        }
+        
+        .social-btn.qq {
+            color: #12b7f5;
+        }
+        
+
+        footer {
+            background: var(--primary);
+            padding: 4rem 5% 2rem;
+            border-top: 1px solid rgba(102, 192, 244, 0.1);
+            margin-top: 50px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-column h4 {
+            color: var(--accent);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h4::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--accent);
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-column ul li a {
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-column ul li a:hover {
+            color: var(--accent);
+            padding-left: 5px;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(102, 192, 244, 0.1);
+            color: var(--accent);
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background: var(--accent);
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(102, 192, 244, 0.1);
+            color: #a9b8c8;
+            font-size: 0.9rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .auth-container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <i class="fas fa-gamepad fa-2x"></i>
+            <h1>StellaHao</h1>
+        </div>
+        <div class="user-actions">
+            <a href="login.html" class="active"><i class="fas fa-user"></i> 登录</a>
+        </div>
+    </header>
+    
+    
+    <!-- 登录主内容区 -->
+    <div class="main-content">
+        <div class="auth-container">
+            <h1 class="auth-title">登录StellaHao</h1>
+            
+            <form class="auth-form" id="loginForm">
+                <div class="form-group">
+                    <label for="login-username">用户名或邮箱</label>
+                    <input type="text" id="login-username" placeholder="输入您的用户名或邮箱" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-password">密码</label>
+                    <input type="password" id="login-password" placeholder="输入您的密码" required>
+                    <a href="forgot-password.html" class="forgot-password">忘记密码？</a>
+                </div>
+                
+                <div class="remember-me">
+                    <input type="checkbox" id="remember">
+                    <label for="remember">记住我</label>
+                </div>
+                
+                <div class="auth-actions">
+                    <button type="submit" class="auth-btn">登录</button>
+                </div>
+                
+                <div class="auth-links">
+                    还没有账户？<a href="register.html">立即注册</a>
+                </div>
+                
+                <div class="social-login">
+                    <div class="social-login-title">或使用社交账号登录</div>
+                    <div class="social-login-buttons">
+                        <a href="#" class="social-btn weibo"><i class="fab fa-weibo"></i></a>
+                        <a href="#" class="social-btn weixin"><i class="fab fa-weixin"></i></a>
+                        <a href="#" class="social-btn qq"><i class="fab fa-qq"></i></a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 页脚 - 与主站一致 -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h4>关于StellaHao</h4>
+                <ul>
+                    <li><a href="#">公司简介</a></li>
+                    <li><a href="#">团队介绍</a></li>
+                    <li><a href="#">联系我们</a></li>
+                    <li><a href="#">加入我们</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>帮助中心</h4>
+                <ul>
+                    <li><a href="#">常见问题</a></li>
+                    <li><a href="#">账号问题</a></li>
+                    <li><a href="#">支付问题</a></li>
+                    <li><a href="#">退款政策</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>法律信息</h4>
+                <ul>
+                    <li><a href="#">用户协议</a></li>
+                    <li><a href="#">隐私政策</a></li>
+                    <li><a href="#">版权声明</a></li>
+                    <li><a href="#">使用条款</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>关注我们</h4>
+                <p>获取最新游戏资讯和优惠活动</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-weibo"></i></a>
+                    <a href="#"><i class="fab fa-weixin"></i></a>
+                    <a href="#"><i class="fab fa-qq"></i></a>
+                    <a href="#"><i class="fab fa-bilibili"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p> 2025 StellaHao - 探索无限游戏世界。保留所有权利。</p>
+        </div>
+    </footer>
+
+    <script>
+        // 登录表单提交
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            const remember = document.getElementById('remember').checked;
+            
+            // 这里应该是实际的登录验证逻辑
+            console.log('apos;登录信息:', { username, password, remember });
+            
+            // 模拟登录成功
+            alert('登录成功！');
+            // window.location.href = &apos;index.html&apos;;
+        });
+        
+        // 社交登录按钮点击事件
+        document.querySelectorAll('.social-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const platform = this.classList.contains('weibo') ? '微博' : 
+                                this.classList.contains('weixin') ? '微信' : 'QQ';
+                alert(`即将通过${platform}登录`);
+            });
+        });
+    </script>
+</body>
+</html>
